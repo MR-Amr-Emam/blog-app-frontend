@@ -1,0 +1,16 @@
+START UPLOAD REPOSITORY TO GITHUB
+
+PLAN
+
+1-all posts and videos section in profile page
+2-make profile page for rendering videos and must auto play
+3-show friends in profile page
+
+BETTER DESIGN FOR BLOG PAGE
+
+BACKEND STAFF
+
+1-start build in backend and build authentication things
+2-do own posts and videos for each user
+3-build chat app
+4-make notification for chats

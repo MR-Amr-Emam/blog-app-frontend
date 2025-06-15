@@ -1,0 +1,31 @@
+.main-image{
+    background-image: url("https://t3.ftcdn.net/jpg/02/23/12/64/360_F_223126414_7kZvuFnqEbT3Qo27hnO2NuTmK2OdzDqx.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 70vh;
+    border-radius: 5px;
+}
+
+.comment-options{
+    border: 1px solid var(--bs-gray-500);
+    border-radius: 5px;
+}
+
+.comment-options > div:first-child > *:hover{
+    background-color: var(--bs-gray-600);
+    color: white;
+    border-radius: 5px;
+}
+
+.comment-options textarea{
+    outline: none;
+    resize: none;
+    border: none;
+    height: calc(2*var(--unit));
+}
+
+.comment-options .focus{
+    height: calc(7*var(--unit));
+}
+
+

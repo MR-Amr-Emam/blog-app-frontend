@@ -1,0 +1,165 @@
+// Custom.scss
+// Option B: Include parts of Bootstrap
+
+@import "headers";
+
+$unit: var(--unit);
+
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "../node_modules/bootstrap/scss/functions";
+
+
+
+// 2. Include any default variable overrides here
+
+// 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/variables-dark";
+
+// 4. Include any default map overrides here
+
+
+// 5. Include remainder of required parts
+@import "../node_modules/bootstrap/scss/maps";
+@import "../node_modules/bootstrap/scss/mixins";
+@import "../node_modules/bootstrap/scss/root";
+
+
+$utilities-text-emphasis-colors: map-merge($utilities-text-emphasis-colors,(
+    "first": $purple-800,
+));
+
+
+$utilities-bg-colors: map-merge($utilities-bg-colors,(
+    "first": $purple-700
+));
+
+
+// 6. Optionally include any other parts as needed
+@import "../node_modules/bootstrap/scss/utilities";
+@import "../node_modules/bootstrap/scss/reboot";
+@import "../node_modules/bootstrap/scss/type";
+@import "../node_modules/bootstrap/scss/images";
+@import "../node_modules/bootstrap/scss/containers";
+@import "../node_modules/bootstrap/scss/grid";
+@import "../node_modules/bootstrap/scss/helpers";
+
+// custom imports
+@import "../node_modules/bootstrap/scss/buttons";
+
+
+$custom-utilities: ("font-size": (
+    property: font-size,
+    class: myfs,
+    values: (
+        1: calc(2.5*$unit),
+        2: calc(2*$unit),
+        3: calc(1.5*$unit),
+        4: calc(1.2*$unit),
+        null: $unit,
+        mini: calc(0.8*$unit),
+    )
+  ),
+  "padding":(
+    property: padding,
+    class: myp,
+    values:(
+        0: 0px,
+        1: calc(0.25*$unit),
+        2: calc(0.5*$unit),
+        3: calc(0.8*$unit),
+    )
+  ),
+  "font-family":(
+    property: font-family,
+    class: font-family,
+    values:(
+        roboto: ("Roboto", sans-serif),
+    )
+  ),
+  "pointer":(
+    property: cursor,
+    class: pointer,
+    values:(
+      null: pointer,
+    )
+  ),
+  "shadow": (
+    property: box-shadow,
+    class: shadow,
+    values:(
+      null: 0px 0px 5px 1px $gray-300,
+      dark: 0px 0px 5px 5px $gray-900,
+      lg: var(--#{$prefix}box-shadow-lg),
+      bottom: 0px 1px 5px 0.5px $gray-300,
+    )
+  ),"width": (
+    property: width,
+    class: w,
+    values: (
+      25: 25%,
+      30: 30%,
+      50: 50%,
+      75: 75%,
+      90: 90%,
+      100: 100%,
+      auto: auto,
+      full: 100vw,
+    )
+  ),"height": (
+    property: height,
+    class: h,
+    values: (
+      25: 25%,
+      50: 50%,
+      75: 75%,
+      90: 90%,
+      100: 100%,
+      auto: auto,
+      full: 100vh,
+    )
+  ),
+);
+
+$utilities: map-merge($utilities, $custom-utilities);
+
+
+// 7. Optionally include utilities API last to generate classes based on the Sass map in `_utilities.scss`
+@import "../node_modules/bootstrap/scss/utilities/api";
+
+
+
+// 8. Add additional custom code here
+
+a{
+  text-decoration: none;
+  color: inherit;
+}
+
+@each $name,$size  in ("mini":calc(1.8*$unit), "1":calc(2.5*$unit), "2":calc(2.8*$unit), "full":100%){
+  .circle-#{$name}{
+    width: $size;
+    @if $name == "full"{
+      aspect-ratio: 1;
+    } @else{
+      height: $size;
+    }
+    border-radius: 50%;
+  }
+}
+
+
+.blured{
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: 2;
+  background-color: rgb(255, 255, 255, 0.3)
+}
+
+.glory:hover{
+  transition-duration: 0.2s;
+  text-shadow: 0px 0px 2px white;
+}

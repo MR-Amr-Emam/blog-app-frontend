@@ -1,0 +1,8 @@
+.mini-nav-ele:hover, .mini-nav-ele.focused{
+    background-color: var(--bs-gray-700);
+    color: var(--bs-light);
+}
+
+.right-menu{
+    left: 10%;
+}
