@@ -1,0 +1,43 @@
+.mini-nav-ele:hover, .mini-nav-ele.focused{
+    background-color: var(--bs-gray-700);
+    color: var(--bs-light);
+}
+
+.right-side-menu{
+    width: inherit;
+}
+
+.right-menu{
+    left: 10%;
+}
+
+.videos-container{
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 35%;
+    column-gap: 20px;
+}
+
+.video-active{
+    opacity: 0%;
+}
+
+.video-active:hover{
+    opacity: 75%;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.video-active::after{
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    width: 0;
+    height: 0;
+    border-left: calc(2*var(--unit)) solid white;
+    border-top: calc(var(--unit)) solid transparent;
+    border-bottom: calc(var(--unit)) solid transparent;
+}
+

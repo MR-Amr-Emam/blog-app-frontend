@@ -8,8 +8,9 @@ import ProfilePage from "@/profile-page/profile-page";
 import BlogPage from "@/blog-page/blog-page";
 import HomePage from "@/home-page/home-page"
 
-import styles from "./page.module.css";
+import style from "./page.module.css";
 import { useEffect, useState } from "react";
+import { GroupPage } from "@/group-page/group-page";
 
 
 export default function Home() {
@@ -28,10 +29,11 @@ export default function Home() {
     <BrowserRouter>
       <Provider store={store}>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<ProfilePage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/group" element={<GroupPage />} />
         </Routes>
       </Provider>
     </BrowserRouter>
