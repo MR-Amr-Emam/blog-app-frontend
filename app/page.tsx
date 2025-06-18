@@ -17,6 +17,7 @@ export default function Home() {
   const message = "that is for branch testing :)";
   const hello = "not heldfdffdlo";
   const [isClient, setIsClient] = useState(false);
+  const addition = "addition";
 
   useEffect(()=>{
     setIsClient(true);
