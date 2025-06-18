@@ -1,6 +1,6 @@
 "use client";
 
-import { BrowserRouter, Routes, Route, NavLink } from "react-router";
+import { BrowserRouter, Routes, Route } from "react-router";
 import { Provider } from "react-redux";
 import { store } from "@/state-store/store";
 
@@ -15,6 +15,7 @@ import { GroupPage } from "@/group-page/group-page";
 
 export default function Home() {
   const message = "that is for branch testing :)";
+  const hello = "hello";
 
   const [isClient, setIsClient] = useState(false);
 
