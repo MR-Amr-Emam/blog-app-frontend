@@ -8,7 +8,7 @@ import ProfilePage from "@/profile-page/profile-page";
 import BlogPage from "@/blog-page/blog-page";
 import HomePage from "@/home-page/home-page"
 
-import style from "./page.module.css";
+
 import { useEffect, useState } from "react";
 import { GroupPage } from "@/group-page/group-page";
 
