@@ -15,7 +15,8 @@ import { GroupPage } from "@/group-page/group-page";
 
 export default function Home() {
   const message = "that is for branch testing :)";
-  const hello = "sdfdsfdsf";
+
+  const hello = "hello";
   const [isClient, setIsClient] = useState(false);
 
   useEffect(()=>{
