@@ -18,6 +18,7 @@ export default function Home() {
 
   const hello = "hello";
   const [isClient, setIsClient] = useState(false);
+  const addition = "addition";
 
   useEffect(()=>{
     setIsClient(true);
