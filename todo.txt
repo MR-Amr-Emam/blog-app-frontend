@@ -1,7 +1,15 @@
-THE MOST IMPORTANT LEARN HOW MERGE WORKS AND IT IS DONE
-BETTER DESIGN FOR BLOG PAGE
+display user data
 
-BACKEND STAFF
+
+edit user data
+username-profile-background-bio
+upload images use jscrop determine aspect ratio to background image
+
+build blog model
+
+comments
+categories
+groups
 
 1-start build in backend and build authentication things
 2-do own posts and videos for each user
