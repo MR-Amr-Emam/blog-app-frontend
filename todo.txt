@@ -15,3 +15,7 @@ groups
 2-do own posts and videos for each user
 3-build chat app
 4-make notification for chats
+
+
+IDEAS
+save posts show friends requests
