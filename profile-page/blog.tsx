@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router"
+import { Link } from "react-router"
 
 interface Props{
     mini?:boolean,
@@ -13,17 +13,19 @@ interface Props{
 
 
 export function Blog(props:Props){
-    const navigate = useNavigate()
     return (
-        <div onClick={()=>navigate("/blog")} className={`bg-white w-90 position-relative start-50 translate-middle-x myp-2 myfs ${props.mini?"border":"shadow"} my-3 pointer`}>
+        <Link to={`/blog/${props.id}/`}><div className={`bg-white w-90 position-relative start-50 translate-middle-x
+        myfs ${props.mini?"border":"shadow"} my-3 pointer overflow-hidden`} style={props.mini?{}:{ aspectRatio:0.9 }}>
             <div>
-                <img className="w-100" src="https://t3.ftcdn.net/jpg/02/23/12/64/360_F_223126414_7kZvuFnqEbT3Qo27hnO2NuTmK2OdzDqx.jpg" />
+                <img className="w-100" src={props.image} style={{ aspectRatio:2 }} />
             </div>
-            <div>
-                <div className={`myfs-4 fw-semibold text-first`}>{props.title}</div>
+            <div className="myp-2">
+                <div className={`${props.mini?"myfs-mini":"myfs"} fw-semibold text-first`}>{props.title}</div>
                 <div className={`myfs-mini text-dark-emphasis`}>{props.views} views {props.likes} likes</div>
                 {props.mini?"":<p className="text-dark">{props.description}</p>}
             </div>
-        </div>
+            {props.mini?"":<div className="position-absolute bottom-0 w-100" style={{
+                height:"20%", background:"linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.7))"}} />}
+        </div></Link>
     )
 }

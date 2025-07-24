@@ -1,9 +1,22 @@
-THE MOST IMPORTANT LEARN HOW MERGE WORKS AND IT IS DONE
 BETTER DESIGN FOR BLOG PAGE
 
 BACKEND STAFF
 
-1-start build in backend and build authentication things
-2-do own posts and videos for each user
+
+
+5-ADJUST FILE STORAGE SYSTEM IN BACKEND
+
+6-ADJUST ALSO VIDEOS PAGE AND DISPLAYING VIDEO IN BLOG PAGE
+
+
+QUERIES
+CREATE BLOG IN A GroupPage
+DISPLAY BLOGS IN A GROUP
+DISPLAY GROUPS DATA(MEMBERS, ABOUT, ....) IN A GROUP
+JOIN REQUEST
+ADMIN CAN ACCEPT REQUESTS
+
+
 3-build chat app
-4-make notification for chats
+4-make notifications for chats
+

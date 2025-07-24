@@ -1,4 +1,4 @@
-import { useGetPokemonByNameQuery, pokemonApi } from '@/state-store/rtk-test'
+import { useGetPokemonByNameQuery, pokemonApi } from '@/state-manage/users-query'
 import { useEffect, useRef } from 'react'
 
 export function LeftSideMenu(){

@@ -1,41 +1,44 @@
+import { useEffect, useRef } from "react"
+
 import { NavBar } from "@/app/navbar";
-import style from "./blog-page.module.css";
-import { BlogSection } from "./blog-section";
-import { MainSection } from "./main-section";
-import { AddComment } from "./add-comment";
-import { Comment } from "./comment";
+import { Blog } from "./blog";
 import { SideMenu } from "./side-menu";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router";
+
+import { useGetBlogQuery } from "@/state-manage/blogs-query";
 
 export default function BlogPage(){
-    const blog = useSelector((state:any)=>state.blogs[0]);
-    const comments = useSelector((state:any)=>state.comments);
+    const {id} = useParams();
+    const topHeader = useRef<any>(null);
+    const pageBody = useRef(null);
+    const {data, isSuccess} = useGetBlogQuery(Number(id||1));
+    const blog = data as any;
+
+    useEffect(()=>{
+        if(topHeader.current && pageBody.current){
+            var header = topHeader.current as HTMLElement;
+            var body = pageBody.current as HTMLElement;
+            body.style.top = header.offsetHeight.toString() + "px";
+        }
+    })
+
     return (
     <div>
-        <NavBar />
-        <div className="row m-0">
+        <div ref={topHeader} className="position-fixed w-100 z-1"><NavBar /></div>
+        <div ref={pageBody} className="row m-0 position-relative">
             <div className="col-9 myp-0">
-            <div className="position-relative myfs">
-            <div className="w-75 position-relative start-50 translate-middle-x mt-3">
-
-                <MainSection username={blog.username} views={blog.views} likes={blog.likes}
-                date={blog.date} title={blog.title} description={blog.description} image={blog.image}   />
-
-            </div>
-            <div className="shadow myp-3 rounded mt-3 w-75 position-relative start-50 translate-middle-x myp-2">
-                <div className={`${style["main-image"]} w-100 position-relative start-50 translate-middle-x mt-3`}></div>
-
-                {blog.sections.map((section:any, index:number)=><BlogSection key={index} image={section.image} paragraph={section.paragraph} />)}
-            </div>
-            <div className="mt-3 w-75 position-relative start-50 translate-middle-x">
-                <AddComment />
-                {comments.map((comment:any, index:number)=><Comment key={index} username={comment.username}
-                image={comment.image} date={comment.date} likes={comment.likes} comment={comment.comment} comments={comment.comments} />)}
-            </div>
-        </div>
+                <div className="position-relative myfs">
+                    <div className="w-90 position-relative start-50 translate-middle-x mt-3">
+                        <Blog />
+                    </div>
+                </div>
             </div>
             <div className="col-3 myp-0">
-                <SideMenu />
+                <div className="position-fixed overflow-y-scroll"
+                style={{height:`calc(100vh - ${topHeader.current?.offsetHeight.toString()}px)`, width:"inherit"}}>
+                    {isSuccess && <SideMenu category={data.category} />}
+                </div>
             </div>
         </div>
         

@@ -18,6 +18,13 @@ $unit: var(--unit);
 
 // 4. Include any default map overrides here
 
+$custom-colors: (
+  "first": $purple-800,
+);
+
+// Merge the maps
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
 
 // 5. Include remainder of required parts
 @import "../node_modules/bootstrap/scss/maps";
@@ -27,11 +34,13 @@ $unit: var(--unit);
 
 $utilities-text-emphasis-colors: map-merge($utilities-text-emphasis-colors,(
     "first": $purple-800,
+    "gray": var(--#{$prefix}dark-text-emphasis),
 ));
 
 
 $utilities-bg-colors: map-merge($utilities-bg-colors,(
-    "first": $purple-700
+    "first": $purple-700,
+    "gray": var(--#{$prefix}secondary-bg-subtle),
 ));
 
 
@@ -39,13 +48,14 @@ $utilities-bg-colors: map-merge($utilities-bg-colors,(
 @import "../node_modules/bootstrap/scss/utilities";
 @import "../node_modules/bootstrap/scss/reboot";
 @import "../node_modules/bootstrap/scss/type";
-@import "../node_modules/bootstrap/scss/images";
+//@import "../node_modules/bootstrap/scss/images";
 @import "../node_modules/bootstrap/scss/containers";
 @import "../node_modules/bootstrap/scss/grid";
-@import "../node_modules/bootstrap/scss/helpers";
+//@import "../node_modules/bootstrap/scss/helpers";
 
 // custom imports
 @import "../node_modules/bootstrap/scss/buttons";
+@import "../node_modules/bootstrap/scss/forms";
 
 
 $custom-utilities: ("font-size": (
@@ -118,7 +128,15 @@ $custom-utilities: ("font-size": (
       auto: auto,
       full: 100vh,
     )
-  ),
+  ),"aspect-ratio":(
+    property: aspect-ratio,
+    class: ratio,
+    values:(
+      1: 1,
+      2: 2,
+      3: 3,
+    )
+  )
 );
 
 $utilities: map-merge($utilities, $custom-utilities);
@@ -156,10 +174,23 @@ a{
   height: 100vh;
   width: 100vw;
   z-index: 2;
-  background-color: rgb(255, 255, 255, 0.3)
+  background-color: rgb(114, 114, 114, 0.7)
 }
 
 .glory:hover{
   transition-duration: 0.2s;
   text-shadow: 0px 0px 2px white;
+}
+
+.option-select:hover, .option-select.focused{
+    background-color: var(--bs-gray-700);
+    color: var(--bs-light);
+}
+
+.myinput{
+  border: 1px solid var(--bs-dark-bg-subtle);
+  outline: none;
+  width: 100%;
+  padding: calc(0.25*var(--unit));
+  border-radius: calc(0.5*var(--unit));
 }
