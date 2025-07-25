@@ -3,7 +3,10 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router";
 import { Cropper } from "react-cropper";
 
-import { useSubmitBlogMutation } from "@/state-manage/blogs-query";
+import { useDispatch } from "react-redux";
+import { setBlogSubmitted } from "@/state-manage/user-slice";
+
+import { useSubmitBlogMutation, useGetCategorysQuery } from "@/state-manage/blogs-query";
 interface Props{
     setAddBlog:Dispatch<boolean>,
     group_id?:number,
@@ -11,17 +14,21 @@ interface Props{
 
 export function AddBlog(props:Props){
     const [blogType, setBlogType] = useState("blog");
+    const [blogCat, setBlogCat] = useState(0);
     const eleRef = useRef<HTMLDivElement | null>(null);
+    const dispatch = useDispatch()
     const [focusedImg, setFocusedImg] = useState("");
     const [blogContents, setBlogContents] = useState<string[]>(["", ""]);
     const [blogImgs, setBlogImgs] = useState<(File|null)[]>([]);
-    const [imgsUrls, setImgsUrls] = useState<(string|undefined)[]>([]); // here edit
+    const [imgsUrls, setImgsUrls] = useState<(string|undefined)[]>([]);
     const [videoUpload, setVideoUpload] = useState<(File|null)>();
     const [imgIndex, setImgIndex] = useState(0);
     const [sectionsNum, setSectionsNum] = useState(0);
     const [errorMsg, setErrorMsg] = useState("");
-    
+    const [clicked, setClicked] = useState(false);
+
     const [mutate, result] = useSubmitBlogMutation();
+    const categories = useGetCategorysQuery();
 
     const {id, username, profileImage} = useSelector((state:any)=>({
         id:state.user.id,
@@ -35,8 +42,8 @@ export function AddBlog(props:Props){
             sections.push({image: "image-"+(i-1), content:blogContents[i]});
         }
         var data = {
-            category:null,
-            is_video: blogType=="video"?true:false,
+            category:blogCat||null,
+            is_video:blogType=="video"?true:false,
             image:"image-0",
             title:blogContents[0],
             description:blogContents[1],
@@ -54,12 +61,13 @@ export function AddBlog(props:Props){
             blogImgs[i] && formData.append("image-"+i, blogImgs[i] as File);
         }
         !result.isLoading && mutate(formData);
+        setClicked(true)
     }
 
     useEffect(()=>{
-        (!result.isLoading && result.isSuccess) && props.setAddBlog(false);
-        result.isLoading && setErrorMsg("loading...");
-        !result.isLoading && setErrorMsg("");
+        (!result.isLoading && result.isSuccess) && props.setAddBlog(false) && dispatch(setBlogSubmitted(true));
+        !result.isLoading && !result.isSuccess && clicked && setErrorMsg("fill fields properly");
+        result.isLoading && setErrorMsg("");
     }, [result.isSuccess, result.isLoading])
 
     useEffect(()=>{
@@ -90,22 +98,37 @@ export function AddBlog(props:Props){
             />:""}
             <div ref={eleRef} className="myp-3 bg-light rounded myfs text-gray w-75
             position-absolute start-50 translate-middle-x" style={{top:"10%"}}>
+                {result.isLoading?<div className="w-100 h-100 blured"></div>:""}
                 <div>
-                    <div className="d-flex align-items-center mb-3">
+                    <div className="d-flex align-items-top mb-3">
                         <div><Link to={`/profile/${id}/`}><img className="circle-1" src={profileImage} /></Link></div>
                         <div className="myfs text-dark mx-2">
                             <div className="fw-semibold">{username}</div>
                             <div className="text-gray">add Blog</div>
                         </div>
-                        <div className="text-warning">{errorMsg}</div>
+                        <div className="text-danger mx-3">{errorMsg}</div>
                     </div>
                 </div>
                 <div className="d-flex justify-content-between">
                     <div className="d-flex mb-3">
-                        <div className={`myp-1 me-2 option-select pointer rounded border
-                        ${blogType=="blog"?"focused":""}`} onClick={()=>{setBlogType("blog")}}>blog</div>
-                        <div className={`myp-1 ms2 option-select pointer rounded border
-                        ${blogType=="video"?"focused":""}`} onClick={()=>{setBlogType("video")}}>video</div>
+                        <div className="me-3">
+                            <p className="myfs fw-semibold">Blog Type</p>
+                            <div className="d-flex">
+                                <div className={`myp-1 me-2 option-select pointer rounded border
+                                ${blogType=="blog"?"focused":""}`} onClick={()=>{setBlogType("blog")}}>blog</div>
+                                <div className={`myp-1 ms2 option-select pointer rounded border
+                                ${blogType=="video"?"focused":""}`} onClick={()=>{setBlogType("video")}}>video</div>
+                            </div>
+                        </div>
+                        <div className="ms-3">
+                            <p className="myfs fw-semibold">Category <span className="text-dark mx-2" onClick={()=>{setBlogCat(0)}}>cancel</span></p>
+                            <div className="d-flex">
+                                {categories.isSuccess && categories.data.map((category:any, index:number)=>
+                                <div key={index} className={`myp-1 me-2 option-select pointer rounded border
+                                ${blogCat==category.id?"focused":""}`} onClick={()=>{setBlogCat(category.id)}}>{category.category}</div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div>
@@ -113,12 +136,11 @@ export function AddBlog(props:Props){
                     <div className="mb-3 d-flex align-items-end justify-content-between">
                         <div className="w-100">
                             <label htmlFor="cover-image" className="form-label myfs text-gray">choose cover image</label>
-                            <input id="cover-image" type="file" className="form-control rounded-0" onChange={(e)=>{
+                            <input id="cover-image" type="file" className="form-control rounded-0" onClick={(e)=>{e.currentTarget.value=""}} onChange={(e)=>{
                                 var inputEle = e.currentTarget;
                                 var image = inputEle.files && inputEle.files[0];
                                 image && setFocusedImg(URL.createObjectURL(image));
                                 image && setImgIndex(1);
-                                inputEle.value = "";
                             }} />
                         </div>
                         {blogType=="video"?<div className="w-25 ms-2">
@@ -169,6 +191,7 @@ export function AddBlog(props:Props){
         </div>
     )
 }
+
 
 interface MainProps{
     setFocusedImg:Dispatch<string>,

@@ -81,7 +81,7 @@ interface BlogSectionProps{
 export function BlogSection(props:BlogSectionProps){
     return(
         <div style={{marginBottom:"calc(3 * var(--unit))"}}>
-            <div className="w-100 border rounded"><img src={props.image} className="w-100 rounded" style={{aspectRatio:2}} /></div>
+            {props.image&&<div className="w-100 border rounded"><img src={props.image} className="w-100 rounded" style={{aspectRatio:2}} /></div>}
             <p className="myfs myp-3 text-gray">{props.content}</p>
         </div>
     )
@@ -251,7 +251,7 @@ export function Comment({data, mini, refetch}:CommentProps){
     return (
         <div className={`d-flex myp-2 mt-3 align-items-start`}>
             <div className="mx-3">
-                <Link to={`profile/${data.user.id}/`}><img className={`pointer circle-${mini?"mini":"1"}`} src={data.user.profile_image||undefined} /></Link>
+                <Link to={`/profile/${data.user.id}/`}><img className={`pointer circle-${mini?"mini":"1"}`} src={data.user.profile_image||undefined} /></Link>
             </div>
             <div className="w-100">
                 <div className={mini?"myfs-mini":"myfs"}>

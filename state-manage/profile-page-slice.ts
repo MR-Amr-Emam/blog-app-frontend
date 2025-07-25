@@ -1,4 +1,4 @@
-import { User } from "./users-slice";
+import { User } from "./user-slice";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { QueryActionCreatorResult } from "@reduxjs/toolkit/query";
 

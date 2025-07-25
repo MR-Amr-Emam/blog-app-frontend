@@ -9,7 +9,7 @@ import { Videos } from "./videos";
 import { EditMenu, FriendsMenu, RightSideMenu, EditProfilePic, UserDataEdit } from "./right-side-menu";
 import { useParams } from "react-router";
 
-import { useGetUserQuery } from "@/state-manage/users-query";
+import { useGetUserQuery, useGetFriendsQuery } from "@/state-manage/users-query";
 import { setRefetch } from "@/state-manage/profile-page-slice";
 
 
@@ -65,11 +65,11 @@ export default function ProfilePage(){
 
             <div className="container-fluid myp-0 position-relative" ref={pageBody}>
                 <div className="row w-100 m-0">
-                    <div className="col-9 myp-0">
+                    <div className="col-8 myp-0">
                         {focused=="all blogs"?<AllBlogs miniblogs={miniblogs} />:""}
                         {focused=="videos"?<Videos miniblogs={miniblogs} />:""}
                     </div>
-                    <div className="col-3 myp-0">
+                    <div className="col-4 myp-0">
                         <div className={`${style["right-side-menu"]} bg-light text-dark myfs position-fixed overflow-y-scroll`}
                         style={{height:`calc(100vh - ${topHeader.current?.offsetHeight.toString()}px)`}}>
                             

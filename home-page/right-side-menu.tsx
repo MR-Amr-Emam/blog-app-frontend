@@ -5,6 +5,7 @@ import { useGetFriendsQuery } from "@/state-manage/users-query";
 import { useGetGroupsQuery } from "@/state-manage/groups-query";
 import { useSelector } from "react-redux";
 import { Dispatch } from "react";
+import { ChatLeftDotsFill } from "react-bootstrap-icons";
 
 interface Props{
     setCreateGroup:Dispatch<boolean>,
@@ -22,6 +23,7 @@ export function RightSideMenu({setCreateGroup}:Props){
                     <div key={index} className="d-flex align-items-center mt-3">
                         <div><img src={friend.profile_image} className="circle-mini" /></div>
                         <Link to={`/profile/${friend.id}`}><div className="myfs-mini mx-2 pointer">{friend.username}</div></Link>
+                        <Link to={`/chat/${friend.id}`}><div className="mx-2 myfs-mini text-first pointer"><ChatLeftDotsFill /></div></Link>
                     </div>
                 )
             })}

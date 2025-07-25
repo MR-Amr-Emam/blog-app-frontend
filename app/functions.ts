@@ -1,3 +1,7 @@
+export const BACKEND_DOMAIN = "http://localhost:8000/"
+
+
+
 export function calc_date(date:string):string{
     var diff = Date.now() - Date.parse(date);
     diff = diff/1000/60;

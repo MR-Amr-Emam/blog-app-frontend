@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Blog } from "./blog";
 import { NavBar } from "@/app/navbar";
 import { MiniNavbar } from "./mini-navbar";
@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { AddBlog } from "./add-blog";
 import { CreateGroup } from "./create-group";
 
+import { setBlogSubmitted } from "@/state-manage/user-slice";
 import { Blog as BlogType } from "@/state-manage/blogs-slice";
 import { useGetHomeBlogsQuery } from "@/state-manage/blogs-query";
 
@@ -17,9 +18,15 @@ export default function HomePage(){
     const homeBlogsObj = useGetHomeBlogsQuery(category.id);
     const topHeader = useRef(null);
     const pageBody = useRef(null);
+    const blogSubmitted = useSelector((state:any)=>state.states.blogSubmitted)
+    const dispatch = useDispatch()
 
     const [addBlog, setAddBlog] = useState(false);
     const [createGroup, setCreateGroup] = useState(false);
+
+    useEffect(()=>{
+        blogSubmitted && setTimeout(()=>{dispatch(setBlogSubmitted(false))}, 2000)
+    }, [blogSubmitted])
 
     useEffect(()=>{
         if(topHeader.current && pageBody.current){
@@ -35,6 +42,8 @@ export default function HomePage(){
                 <NavBar />
                 <MiniNavbar category={category} setCategory={setCategory} />
             </div>
+            {blogSubmitted?<div className="shadow text-success myp-2 myfs rounded position-fixed
+            fw-bold z-2 bg-white" style={{bottom:"10%", right:"10%"}}>submitted successfully</div>:""}
             {addBlog?<AddBlog setAddBlog={setAddBlog} />:""}
             {createGroup?<CreateGroup setCreateGroup={setCreateGroup} />:""}
             <div className="row position-relative m-0" ref={pageBody}>

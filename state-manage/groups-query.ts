@@ -3,12 +3,12 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { defaultBaseQuery } from "./users-query";
 
 import { Blog } from "./blogs-slice"
-import { BACKEND_DOMAIN } from "@/app/page";
+import { BACKEND_DOMAIN } from "@/app/functions";
 
 export const GroupsApi = createApi({
     reducerPath:"groupsapi",
     baseQuery:defaultBaseQuery({
-        baseUrl:"http://localhost:8000/"+"groups/",
+        baseUrl:BACKEND_DOMAIN+"groups/",
         credentials: "include",
     }),
     endpoints: (build) => ({
@@ -54,8 +54,8 @@ export const GroupsApi = createApi({
                 url: `admin/${id}/${type}/`,
             }),
         }),
-        getInvites: build.query<any, void>({
-            query:()=>({
+        getInvites: build.query<any, null>({
+            query:(n)=>({
                 url: "invite/",
             }),
         }),

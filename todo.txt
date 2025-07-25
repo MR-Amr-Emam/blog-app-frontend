@@ -1,39 +1,10 @@
-edit user data
-username-profile-background-bio
-upload images use jscrop determine aspect ratio to background image
-
-build blog model
-
-comments
-categories
-groups
 
 
 
-5-ADJUST FILE STORAGE SYSTEM IN BACKEND
-
-6-ADJUST ALSO VIDEOS PAGE AND DISPLAYING VIDEO IN BLOG PAGE
 
 
-QUERIES
-CREATE BLOG IN A GroupPage
-DISPLAY BLOGS IN A GROUP
-DISPLAY GROUPS DATA(MEMBERS, ABOUT, ....) IN A GROUP
-JOIN REQUEST
-ADMIN CAN ACCEPT REQUESTS
+4- add loading states
 
+5- make refresh before making websockets
 
-3-build chat app
-<<<<<<< HEAD
-4-make notifications for chats
-
-=======
-4-make notification for chats
-
-
-IDEAS
-save posts
-share posts
-view who reacts
-show friends requests
->>>>>>> 49287edf830ff3dca6f74b89581688adf9f62af9
+5- make wsgi server

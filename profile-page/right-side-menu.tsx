@@ -15,9 +15,16 @@ import { Blog as BlogType } from "@/state-manage/blogs-slice";
 import { setRefetch, setSideMenuSelect } from "@/state-manage/profile-page-slice"
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useParams } from "react-router";
-import { Miniblogs, User } from "@/state-manage/users-slice";
+import { Miniblogs, User } from "@/state-manage/user-slice";
 import style from "./profile-page.module.css";
 import "react-cropper/node_modules/cropperjs/dist/cropper.css"
+import { 
+    ChatLeftDotsFill,
+    PersonPlusFill,
+    PersonXFill,
+    ArrowLeftShort,
+    PenFill,
+ } from "react-bootstrap-icons";
 import { useGetBlogsQuery } from "@/state-manage/blogs-query";
 
 interface UseStates{
@@ -33,12 +40,15 @@ interface RightSideMenuProps extends UseStates{
 
 export function RightSideMenu(props:RightSideMenuProps){
     const {id} = useParams()
+    const userId = useSelector((state:any)=>state.user.id)
     const setIsProfPic = props.setIsProfPic;
     const topBlogsObj = useGetBlogsQuery({id:Number(id||0), type:"top"});
     const dispatch = useDispatch();
     const userDataObj = useGetUserQuery(props.profileId);
     const groupsDataObj = useGetGroupsQuery(Number(id||1));
     const userData = userDataObj.data;
+    const friendsDataObj = useGetFriendsQuery(Number(id || 0));
+    const months = ["jan", "feb", "march", "april", "may", "jun", "july", "aug", "sep", "oct", "nov", "dec"]
     return (
         <div>
             <div className="w-100">
@@ -49,16 +59,19 @@ export function RightSideMenu(props:RightSideMenuProps){
                     <div className="mx">
                         <img onClick={()=>{setIsProfPic(true);}} className="circle-1 pointer" src={userData?.profileImage} />
                     </div>
-                    <div className="position-relative w-100 mx-3 d-flex justify-content-between align-items-center">
+                    <div className="position-relative w-100 mx-3 d-flex align-items-center">
                         <div>{userData?.username}</div>
                         {(props.isAuthorized || props.profileId==0)?
-                        <div className="myfs-mini pointer text-gray" onClick={()=>{dispatch(setSideMenuSelect("edit"))}}>edit</div>
+                        <div className="myfs-mini pointer text-gray mx-2" onClick={()=>{dispatch(setSideMenuSelect("edit"))}}><PenFill /></div>
                         :""}
                     </div>
                 </div>
-                <div className="myfs-mini text-dark-emphasis mt-2 pointer" onClick={()=>{
+                <span className="position-relative myfs-mini text-dark-emphasis mt-2 pointer" onClick={()=>{
                     dispatch(setSideMenuSelect("friends"))
-                }}>{userData?.blogsNumber} blogs {userData?.friendsNumber} friends</div>
+                }}>{userData?.blogsNumber} blogs {friendsDataObj.data?.friends.length} friends
+                {(userId==id && friendsDataObj.isSuccess && (friendsDataObj.data.user_requests.length || friendsDataObj.data.friends_requests.length))?
+                <div className="position-absolute start-100 bottom-50 myp-1 rounded-circle" style={{backgroundColor:"red"}} />:""}
+                </span>
                 <div className="myfs"><p>{userData?.bio}</p></div>
                 {(props.isAuthorized||props.profileId==0)?"":<FriendBtn />}
                 <div>
@@ -69,14 +82,16 @@ export function RightSideMenu(props:RightSideMenuProps){
                         <Link to={`/group/${group.id}`}><div className="myfs-mini mx-2 pointer">{group.name}</div></Link>
                     </div>)}
                 </div>
-                <div className="text-dark-emphasis myfs-mini mt-3">joined at sep 2025</div>
-                <div className="d-flex myfs-mini mt-2"><div>instgram</div><div className="mx-3">linkedin</div></div>
+                {userData?<div className="text-dark-emphasis myfs-mini mt-3">
+                    joined at {months[new Date(userData.date).getMonth()]} {new Date(userData.date).getFullYear()}
+                </div>:""}
+                <div className="d-flex myfs-mini mt-2 text-dark"><div className="pointer">instgram</div><div className="mx-3 pointer">linkedin</div></div>
                 <div className="mt-3">
                     <div className="fw-semibold text-center myfs-4 mx-3 border-top">top blogs</div>
-                        {topBlogsObj.isSuccess && topBlogsObj.data.map((blog:BlogType, index:number)=>
+                        <div className="w-90 position-relative start-50 translate-middle-x">{topBlogsObj.isSuccess && topBlogsObj.data.map((blog:BlogType, index:number)=>
                             <Blog key={blog.id} mini={true} id={blog.id} title={blog.title} views={blog.views}
-                            likes={blog.likes} description={blog.description} image={blog.image} />
-                        )}
+                            likes={blog.likes} description={blog.description} image={blog.image} date={blog.date} />
+                        )}</div>
                 </div>
             </div>
         </div>
@@ -142,9 +157,8 @@ function FriendBtn(){
     )
 }
 
-export function FriendsMenu(props:UseStates){
+export function FriendsMenu({setIsProfPic}:{setIsProfPic:any}){
     const {id} = useParams()
-    const setIsProfPic = props.setIsProfPic;
     const dispatch = useDispatch();
     const [friendsType, setFriendsType] = useState("friends");
     const friendsTypes = ["friends", "requests", "your requests"];
@@ -153,20 +167,26 @@ export function FriendsMenu(props:UseStates){
     const userDataObj = useGetUserQuery(Number(id || 0));
     const userData = userDataObj.data;
     const {data, isSuccess} = useGetFriendsQuery(Number(id || 0));
+    const [mutate, result] = usePutFriendsMutation()
 
-    function generateFriend(ele:any, index:number){
+
+    function generateFriend(ele:any, index:number, friendStatus:number){
         return (
-            <div key={index} className={`${style["profile-image"]} d-flex mb-3 pointer px-2`}>
-                <div className="mx">
+            <div key={index} className={`${style["profile-image"]} d-flex align-items-center mb-3 pointer px-2 mt-3`}>
+                <div className="mx-2">
                     <img onClick={()=>{setIsProfPic(true);}} className="circle-mini pointer" src={ele.profile_image} />
                 </div>
-                <div className="position-relative w-100 mx-3">
-                    <p className="position-absolute top-50 translate-middle-y myfs-mini">
-                        <Link to={`/profile/${ele.id}`} onClick={()=>{
-                            dispatch(setSideMenuSelect("menu"));
-                        }}>{ele.username}</Link>
-                    </p>
+                <div className="mx-2 myfs-mini">
+                    <Link to={`/profile/${ele.id}`} onClick={()=>{
+                        dispatch(setSideMenuSelect("menu"));
+                    }}>{ele.username}</Link>
                 </div>
+                {friendStatus==1?<><Link to={`/chat/${ele.id}`}><div className="mx-2 myfs-mini text-first pointer"><ChatLeftDotsFill /></div></Link>
+                <div className="mx-2 pointer myfs-mini text-danger" onClick={()=>{mutate({id:ele.id, method:"delete", friendStatus:1})}}><PersonXFill /></div></>:""}
+                {friendStatus==2?<PersonPlusFill className="mx-2 myfs-mini text-first"
+                onClick={()=>{mutate({id:ele.id, method:"put", friendStatus:1 })}} />:""}
+                {friendStatus==3?<PersonXFill className="mx-2 myfs-mini text-danger"
+                onClick={()=>{mutate({id:ele.id, method:"delete", friendStatus:1 })}} />:""}
             </div>
         )
     }
@@ -176,21 +196,25 @@ export function FriendsMenu(props:UseStates){
             <div className="d-flex align-items-top">
                 <div className="myfs fw-bold pointer me-3" onClick={()=>{
                     dispatch(setSideMenuSelect("menu"))
-                }}>&larr;</div>
+                }}><ArrowLeftShort className="myfs-3" /></div>
                 <div>
                     <div className="myfs"><span className="fw-semibold">{userData?.username}</span> friends</div>
-                    <div className="myfs-mini text-dark-emphasis">{userData?.friendsNumber} friends</div>
+                    <div className="myfs-mini text-dark-emphasis">{data.friends.length} friends</div>
                 </div>
             </div>
             <div className="d-flex w-100 overflow-hidden">
                 {friendsTypes.map((ele, index)=>
-                <div key={index} className={`${friendsType==ele?"focused":""} option-select pointer mx-2 myp-1 myfs-mini rounded`}
-                onClick={()=>{setFriendsType(ele)}}>{ele}</div>
+                <div key={index} className={`${friendsType==ele?"focused":""} option-select pointer mx-2 myp-1 myfs-mini rounded position-relative`}
+                onClick={()=>{setFriendsType(ele)}}>
+                    {ele}
+                    {((index==1 && isSuccess && data.friends_requests.length) || (index==2 && isSuccess && data.user_requests.length))?
+                    <div className="position-absolute bottom-50 start-100 myp-1 rounded-circle" style={{backgroundColor:"red"}} />:""}
+                </div>
                 )}
             </div>
-            {isSuccess && friendsType=="friends" && data.friends.map((ele:any, index:number)=>generateFriend(ele, index))}
-            {isSuccess && friendsType=="requests" && data.friends_requests.map((ele:any, index:number)=>generateFriend(ele, index))}
-            {isSuccess && friendsType=="your requests" && data.user_requests.map((ele:any, index:number)=>generateFriend(ele, index))}
+            {isSuccess && friendsType=="friends" && data.friends.map((ele:any, index:number)=>generateFriend(ele, index, 1))}
+            {isSuccess && friendsType=="requests" && data.friends_requests.map((ele:any, index:number)=>generateFriend(ele, index, 2))}
+            {isSuccess && friendsType=="your requests" && data.user_requests.map((ele:any, index:number)=>generateFriend(ele, index, 3))}
         </div>
     )
 }
@@ -250,9 +274,9 @@ export function EditMenu(props:EditMenuProps){
     return (
         <div className="myp-3">
             <div className="d-flex align-items-center mb-3">
-                <div className="myfs fw-bold pointer me-3" onClick={()=>{
+                <div className="myfs-3 fw-bold pointer me-3" onClick={()=>{
                     dispatch(setSideMenuSelect("menu"));
-                    }}>&larr;</div>
+                    }}><ArrowLeftShort /></div>
                 <div className="fw-semibold">edit profile</div>
             </div>
             <div className="mb-3">

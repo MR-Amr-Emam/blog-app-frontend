@@ -24,7 +24,8 @@ export function AllBlogs(probs:any){
                         description={blog.description}
                         image={blog.image}
                         views={blog.views}
-                        likes={blog.likes} />
+                        likes={blog.likes}
+                        date={blog.date} />
                         :"")
                     })}
                 </div>
@@ -33,7 +34,7 @@ export function AllBlogs(probs:any){
                         return(
                         (index%2)?
                         <Blog key={blog.id} mini={false} id={blog.id} title={blog.title} views={blog.views}
-                        likes={blog.likes} description={blog.description} image={blog.image} />
+                        likes={blog.likes} description={blog.description} image={blog.image} date={blog.date} />
                         :"")
                     })}
                 </div>

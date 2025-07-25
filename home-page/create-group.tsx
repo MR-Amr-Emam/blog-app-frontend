@@ -1,8 +1,9 @@
 import { Dispatch, useEffect, useRef, useState } from "react"
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router";
 import { Cropper } from "react-cropper";
 
+import { setBlogSubmitted } from "@/state-manage/user-slice";
 import { useCreateGroupMutation, useEditGroupMutation } from "@/state-manage/groups-query";
 interface Props{
     setCreateGroup:Dispatch<boolean>,
@@ -17,6 +18,8 @@ export function CreateGroup({setCreateGroup, initialData}:Props){
     const [imgsUrls, setImgsUrls] = useState<(string|undefined)[]>([]);
     const [imgIndex, setImgIndex] = useState(0);
     const [errorMsg, setErrorMsg] = useState("");
+    const [clicked, setClicked] = useState(false);
+    const dispatch = useDispatch()
     
     const [mutateCreate, resultCreate] = useCreateGroupMutation();
     const [mutateEdit, resultEdit] = useEditGroupMutation();
@@ -40,19 +43,19 @@ export function CreateGroup({setCreateGroup, initialData}:Props){
         groupImgs[0] && formData.append("image-0", groupImgs[0]);
         !resultEdit.isLoading && initialData && mutateEdit({formData,id:initialData.id});
         !resultCreate.isLoading && !initialData && mutateCreate(formData);
+        setClicked(true);
     }
-
-    useEffect(()=>{
-        ((!resultCreate.isLoading && resultCreate.isSuccess)
-        ||(!resultEdit.isLoading && resultEdit.isSuccess)) && setCreateGroup(false);
-        
-        (resultCreate.isLoading || resultEdit.isLoading) && setErrorMsg("loading...");
-        
-        (!resultCreate.isLoading || !resultEdit.isLoading) && setErrorMsg("");
     
-    }, [resultCreate.isSuccess,
-        resultCreate.isLoading,
-        resultEdit.isSuccess,
+    useEffect(()=>{
+        if((!resultCreate.isLoading && resultCreate.isSuccess)
+        ||(!resultEdit.isLoading && resultEdit.isSuccess)){setCreateGroup(false); dispatch(setBlogSubmitted(true));}
+
+        (resultCreate.isLoading || resultEdit.isLoading) && setErrorMsg("");
+        
+        ((!initialData && !resultCreate.isLoading && clicked) ||
+        (initialData && !resultEdit.isLoading && clicked)) && setErrorMsg("fill fields properly");
+    
+    }, [resultCreate.isLoading,
         resultEdit.isLoading,])
 
     useEffect(()=>{
@@ -81,7 +84,7 @@ export function CreateGroup({setCreateGroup, initialData}:Props){
             })
         }
     }, [])
-
+    
     return(
         <div className="blured overflow-y-scroll">
             {(focusedImg && imgIndex)?<CropPic
@@ -94,8 +97,9 @@ export function CreateGroup({setCreateGroup, initialData}:Props){
             />:""}
             <div ref={eleRef} className="myp-3 bg-light rounded myfs text-gray w-75
             position-absolute start-50 translate-middle-x" style={{top:"10%"}}>
+                {(resultEdit.isLoading || resultCreate.isLoading)?<div className="w-100 h-100 blured" />:""}
                 <div>
-                    <div className="d-flex align-items-center mb-3">
+                    <div className="d-flex align-items-top mb-3">
                         <div><Link to={`/profile/${id}/`}><img className="circle-1" src={profileImage} /></Link></div>
                         <div className="myfs text-dark mx-2">
                             <div className="fw-semibold">{username}</div>
@@ -103,7 +107,7 @@ export function CreateGroup({setCreateGroup, initialData}:Props){
                                 {initialData?"edit group":"create group"}
                             </div>
                         </div>
-                        <div className="text-warning">{errorMsg}</div>
+                        <div className="text-danger mx-3">{errorMsg}</div>
                     </div>
                 </div>
                 <div>

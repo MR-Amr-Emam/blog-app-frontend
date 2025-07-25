@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useRef, useEffect, useState, Dispatch } from "react";
 
 import { Link, useParams } from "react-router";
@@ -8,6 +8,8 @@ import { CreateGroup } from "@/home-page/create-group";
 import { Blog } from "@/home-page/blog";
 import { AddBlog } from "@/home-page/add-blog";
 
+import { setBlogSubmitted } from "@/state-manage/user-slice";
+
 import { NavBar } from "@/app/navbar";
 import { Btns } from "./btns";
 
@@ -15,11 +17,19 @@ export function GroupPage(){
     const {groupId} = useParams();
     const topHeader = useRef<HTMLDivElement>(null);
     const pageBody = useRef(null);
+    const blogSubmitted = useSelector((state:any)=>state.states.blogSubmitted)
+    const dispatch = useDispatch()
+
     const [addBlog, setAddBlog] = useState(false);
     const [editGroup, setEditGroup] = useState(false);
     const {data, isSuccess, refetch} = useGetGroupQuery(Number(groupId||1));
     
+
+    useEffect(()=>{
+            blogSubmitted && setTimeout(()=>{dispatch(setBlogSubmitted(false))}, 2000)
+        }, [blogSubmitted])
     
+
     useEffect(()=>{
         if(topHeader.current && pageBody.current){
             var header = topHeader.current as HTMLElement;
@@ -45,6 +55,8 @@ export function GroupPage(){
             <div className="position-fixed w-100 z-1" ref={topHeader}>
                 <NavBar />
             </div>
+            {blogSubmitted?<div className="shadow text-success myp-2 myfs rounded position-fixed fw-bold
+            z-1 bg-white" style={{bottom:"10%", right:"10%"}}>submitted successfully</div>:""}
             <div className="position-relative" ref={pageBody}>
                 <div className="position-relative">
                     <div className="position-relative start-50 translate-middle-x w-90">

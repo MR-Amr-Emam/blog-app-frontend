@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, Dispatch } from "react";
-import { Link } from "react-router"
+import { Link, useParams } from "react-router"
 
 import { useGetFriendsQuery } from "@/state-manage/users-query";
 
@@ -15,14 +15,19 @@ interface MsgType{
 }
 
 export function ChatPage(){
-    const topHeader = useRef<HTMLDivElement>(null)
-    const pageBody = useRef<HTMLDivElement>(null)
+    const {friendId} = useParams();
+    const topHeader = useRef<HTMLDivElement>(null);
+    const pageBody = useRef<HTMLDivElement>(null);
     const chatBox = useRef<HTMLDivElement>(null);
     const userId = useSelector((state:any)=>state.user.id)
     const [currentFriend, setCurrentFriend] = useState<any>(null);
     const {data, isSuccess} = useGetFriendsQuery(Number(userId || 0));
 
     const [msgs, setMsgs] = useState<MsgType[]>([]);
+
+    useEffect(()=>{
+        isSuccess && friendId && setCurrentFriend(data.friends.filter((friend:any)=>friendId==friend.id)[0]);
+    }, [isSuccess, friendId])
 
     useEffect(()=>{
             if(topHeader.current && pageBody.current){
@@ -53,6 +58,7 @@ export function ChatPage(){
                 <div className="col-8 myp-3" style={{height:`calc(100vh - ${topHeader.current?.offsetHeight}px`}}>
                     <div className="bg-light rounded d-flex flex-column h-100">
                         <div className="border-bottom myp-2 w-100">
+                            <p className="myfs-4 fw-semibold">messages</p>
                             {currentFriend?<div className="d-flex align-items-center">
                                 <div><img className="circle-1" src={currentFriend.profile_image} /></div>
                                 <div className="myfs mx-2"><Link to={`/profile/${currentFriend.id}`}>{currentFriend.username}</Link></div>
@@ -86,10 +92,10 @@ function Friend({friend, setState}:{friend:any, setState:Dispatch<any>}){
             <div>
                 <img className="circle-mini" src={friend.profile_image} />
             </div>
-            <div className="position-relative w-100 mx-3">
-                <p className="position-absolute top-50 translate-middle-y myfs-mini">
-                    {friend.username}
-                </p>
+            <div className="position-relative w-100 mx-3 myfs-mini">
+                <span className="fw-semibold">{friend.username}</span>
+                {friend.unseens?<span className="mx-2 bg-success text-white rounded-4"
+                style={{padding:"3px", fontSize:"calc(0.7 * var(--unit))"}}>{friend.unseens}</span>:""}
             </div>
         </div>
     )
@@ -156,9 +162,8 @@ function ChatInput({msgs, setMsgs, friend}:{msgs:{msg:string, user_id:number}[],
             inputEle.removeEventListener("keydown", send);
             chatSocket.close();
         }
-    }, [])
+    }, [friend])
     return (
-        <input ref={inputRef} type="text" className="myinput bg-white rounded-pill myfs myp-1 border bg-white mt-3 text-dark px-3"
-        />
+        <input ref={inputRef} type="text" className="myinput bg-white rounded-pill myfs myp-1 border bg-white mt-3 text-dark px-3"/>
     )
 }

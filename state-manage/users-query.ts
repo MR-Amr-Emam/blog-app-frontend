@@ -2,31 +2,15 @@ import { createApi, fetchBaseQuery, FetchBaseQueryArgs, BaseQueryFn,
   FetchArgs, BaseQueryApi} from '@reduxjs/toolkit/query/react'
 
 import { jwtDecode } from 'jwt-decode'
-import { User } from './users-slice'
-import { BACKEND_DOMAIN } from "@/app/page";
-
-
-// Define a service using a base URL and expected endpoints
-export const pokemonApi = createApi({
-  reducerPath: 'pokemonApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://pokeapi.co/api/v2/' }),
-  endpoints: (build) => ({
-    getPokemonByName: build.query<any, string>({
-      query: (name) => name,
-    }),
-  }),
-})
-
-// Export hooks for usage in functional components, which are
-// auto-generated based on the defined endpoints
-export const { useGetPokemonByNameQuery } = pokemonApi
+import { User } from './user-slice'
+import { BACKEND_DOMAIN } from "@/app/functions";
 
 
 
 export const authApiSecure = createApi({
   reducerPath: 'authapisecure',
   baseQuery: defaultBaseQuery({
-    baseUrl: ("http://localhost:8000/"+"auth/"),
+    baseUrl: (BACKEND_DOMAIN+"auth/"),
     credentials: "include",
   }) as any,
   endpoints: (build) => ({
@@ -102,6 +86,7 @@ function transformUser(response:any){
     id:response.id,
     username:response.username,
     bio: response.bio,
+    date: response.date_joined,
     backgroundImage: response.background_image,
     profileImage: response.profile_image,
     friendsNumber: response.friends_number,

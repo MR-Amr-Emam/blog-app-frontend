@@ -7,6 +7,8 @@ import { Blog as BlogType } from "@/state-manage/blogs-slice";
 import { Users } from "@/blog-page/blog"
 import { calc_date } from "@/app/functions";
 
+import { HeartFill, Heart } from "react-bootstrap-icons";
+
 
 export function Blog({blog, refetch}:{blog:BlogType, refetch:any}){
     const [extend, setExtend] = useState(false);
@@ -33,15 +35,15 @@ export function Blog({blog, refetch}:{blog:BlogType, refetch:any}){
             <div className="myp-2">
                 <div className="myfs fw-semibold text-first">{blog.title}</div>
                 <div className="myfs">{blog.description}</div>
-                <div>
-                    <span className="position-relative z-1">
-                        <span className="pointer" onClick={()=>{setIsViews(false); setIsLikes(true)}}>{blog.likes} </span> 
-                        {blog.liked?<span className="text-primary pointer" onClick={()=>{mutate(blog.id)}}>liked</span>:
-                        <span className="pointer" onClick={()=>{mutate(blog.id)}}>likes</span>}
+                <div className="d-flex">
+                    <span className="position-relative z-1 d-flex align-items-center me-1">
+                        <span className="pointer mx-1" onClick={()=>{setIsViews(false); setIsLikes(true)}}>{blog.likes}</span> 
+                        {blog.liked?<span className="text-danger pointer myfs" onClick={()=>{mutate(blog.id)}}><HeartFill /></span>:
+                        <span className="pointer text-gray myfs" onClick={()=>{mutate(blog.id)}}><Heart /></span>}
                         {isLikes?<Users users={blog.likedPeople} setState={setIsLikes} />:""}
                     </span>
-                    <span className="mx-2 position-relative z-1">
-                        <span className="pointer" onClick={()=>{setIsViews(true); setIsLikes(false)}}>{blog.views}</span> views
+                    <span className="mx-2 position-relative z-1 d-flex align-items-center ms-1">
+                        <span className="pointer mx-1" onClick={()=>{setIsViews(true); setIsLikes(false)}}>{blog.views} </span> views
                         {isViews?<Users users={blog.viewedPeople} setState={setIsViews} />:""}
                     </span>
                 </div>
@@ -58,21 +60,20 @@ export function ExtendBlog({state, setExtend, id}:{state:boolean, setExtend:any,
     const {data, isSuccess} = useGetBlogQuery(id);
     return(
         <div className={`${state?"d-block":"d-none"}`}>
-            <div className="d-flex flex-row-reverse">
-                <div className="myfs-3 pointer" onClick={()=>{setExtend(false)}}>x</div>
-            </div>
             {isSuccess && data.sections.map((section:any, index:number)=>{
                 return(
                     <div key={index} className="mt-4">
-                        <div className="">
+                        {section.image&&<div>
                             <img src={section.image} className="w-100 ratio-2 rounded border" />
-                        </div>
+                        </div>}
                         <div className="myfs text-dark myp-1">
                             {section.content}
                         </div>
                     </div>
                 )
             })}
+            <div className="myfs pointer text-gray" onClick={()=>{setExtend(false)}}>see less</div>
+            
         </div>
     )
 }

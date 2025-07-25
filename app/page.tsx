@@ -11,8 +11,7 @@ import { GroupPage } from "@/group-page/group-page";
 
 import { useEffect, useState } from "react";
 import { ChatPage } from "@/chat-page/chat-page";
-
-export const BACKEND_DOMAIN:string = "http://localhost:8000/";
+import { BACKEND_DOMAIN } from "./functions";
 
 
 export default function Home() {
@@ -45,7 +44,7 @@ export default function Home() {
           <Route path="/blog/:id" element={<BlogPage />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/group/:groupId" element={<GroupPage />} />
-          <Route path="/chat" element={<ChatPage />} />
+          <Route path="/chat/:friendId" element={<ChatPage />} />
         </Routes>
       </BrowserRouter>
     </Provider>

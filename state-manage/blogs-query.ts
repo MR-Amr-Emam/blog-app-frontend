@@ -3,12 +3,12 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { defaultBaseQuery } from "./users-query";
 
 import { Blog } from "./blogs-slice"
-import { BACKEND_DOMAIN } from "@/app/page";
+import { BACKEND_DOMAIN } from "@/app/functions";
 
 export const BlogsApi = createApi({
     reducerPath:"blogsapi",
     baseQuery:defaultBaseQuery({
-        baseUrl:"http://localhost:8000/"+"blogs/",
+        baseUrl:BACKEND_DOMAIN+"blogs/",
         credentials: "include",
     }),
     endpoints: (build) => ({
