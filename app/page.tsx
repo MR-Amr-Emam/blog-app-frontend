@@ -1,53 +1,25 @@
-"use client";
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation'
 
-import { BrowserRouter, Routes, Route } from "react-router";
-import { Provider } from "react-redux";
-import { store } from "@/state-manage/store";
-import { InitialSetup } from "./initial-setup";
-import ProfilePage from "@/profile-page/profile-page";
-import BlogPage from "@/blog-page/blog-page";
-import HomePage from "@/home-page/home-page"
-import { GroupPage } from "@/group-page/group-page";
-
-import { useEffect, useState } from "react";
-import { ChatPage } from "@/chat-page/chat-page";
 import { BACKEND_DOMAIN } from "./functions";
+import { PageBody } from "./page-body";
 
 
-export default function Home() {
-  const [isClient, setIsClient] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isAuth, setIsAuth] = useState(false);
-  useEffect(()=>{
-    setIsClient(true);
-    isClient && fetch(BACKEND_DOMAIN+"auth/token/refresh/", {method:"POST", credentials:"include"})
-    .then((response)=>{response.ok&&setIsAuth(true);setIsLoaded(true);})
-    .catch((error)=>{console.log(error); setIsLoaded(true)});
-  }, [isClient])
+export default async function Home() {
+  var userCookies = await cookies();
 
+  var response = await fetch(BACKEND_DOMAIN+"/auth/user-info/0/", {
+    credentials:"include",
+    headers:{
+      "Cookie": `access_token=${userCookies.get("access_token")?.value}`
+    }})
 
-  if(!isClient || !isLoaded){
-    return null;
+  if(response.ok){
+    return (<PageBody />);
+  }else{
+    redirect("/login/");
   }
 
-  if(isLoaded && !isAuth){
-    return <p className="text-danger text-center myfs-3">not authenticated!!</p>
-  }
 
-  return (
-    <Provider store={store}>
-      <InitialSetup />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<ChatPage />} />
-          <Route path="/profile/:id" element={<ProfilePage />} />
-          <Route path="/blog/:id" element={<BlogPage />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/group/:groupId" element={<GroupPage />} />
-          <Route path="/chat/:friendId" element={<ChatPage />} />
-        </Routes>
-      </BrowserRouter>
-    </Provider>
-  );
 }
 

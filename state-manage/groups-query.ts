@@ -8,7 +8,7 @@ import { BACKEND_DOMAIN } from "@/app/functions";
 export const GroupsApi = createApi({
     reducerPath:"groupsapi",
     baseQuery:defaultBaseQuery({
-        baseUrl:BACKEND_DOMAIN+"groups/",
+        baseUrl:BACKEND_DOMAIN+"/groups/",
         credentials: "include",
     }),
     endpoints: (build) => ({

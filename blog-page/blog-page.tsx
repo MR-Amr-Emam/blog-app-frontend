@@ -13,7 +13,6 @@ export default function BlogPage(){
     const topHeader = useRef<any>(null);
     const pageBody = useRef(null);
     const {data, isSuccess} = useGetBlogQuery(Number(id||1));
-    const blog = data as any;
 
     useEffect(()=>{
         if(topHeader.current && pageBody.current){

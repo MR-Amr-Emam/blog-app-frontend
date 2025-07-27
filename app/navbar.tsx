@@ -1,7 +1,7 @@
 import {Link} from "react-router";
 import { useSelector } from "react-redux";
 import { useEffect, useRef, useState, Dispatch, SetStateAction, } from "react";
-import { useGetUsersQuery, useGetFriendsQuery } from "@/state-manage/users-query";
+import { useGetUsersQuery, useGetFriendsQuery, useLogoutQuery } from "@/state-manage/users-query";
 import { useGetInvitesQuery, useDeleteInvitesMutation } from "@/state-manage/groups-query";
 import { User } from "@/state-manage/user-slice";
 import { useParams } from "react-router";
@@ -14,6 +14,7 @@ export function NavBar(){
     const userId = useSelector((state:any)=>state.user.id);
     const [isSearch, setIsSearch] = useState(false);
     const {id} = useParams();
+    const [isLogout, setIsLogout] = useState(false);
     useEffect(()=>{setIsSearch(false)}, [id]);
 
     return (
@@ -45,7 +46,8 @@ export function NavBar(){
                         <Messages />
                     </div>
                     <div className="pointer glory mx-2">
-                        <BoxArrowInRight className="myfs-4" />
+                        <BoxArrowInRight className="myfs-4" onClick={()=>{setIsLogout(true)}} />
+                        {isLogout && <Logout />}
                     </div>
                 </div>
             </div>
@@ -201,4 +203,11 @@ function Messages(){
         </div>}
     </div>
     )
+}
+
+
+function Logout(){
+    const {data, isSuccess} = useLogoutQuery();
+    if(isSuccess){window.location.href = window.location.origin+"/login";}
+    return <></>
 }

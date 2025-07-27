@@ -53,8 +53,9 @@ export default function HomePage(){
                 <div className="col-6">
                     <div className="w-100 position-relative start-50 translate-middle-x">
                         <div className="my-3 text-dark pointer rounded myfs myp-2 rounded shadow" onClick={()=>{setAddBlog(true)}}>what is in your mind ...</div>
-                        {homeBlogsObj.isSuccess && homeBlogsObj.data.map((blog:BlogType, index:number)=>
-                        <Blog key={index} blog={blog} refetch={homeBlogsObj.refetch} />)}
+                        {homeBlogsObj.isSuccess?homeBlogsObj.data.map((blog:BlogType, index:number)=>
+                        <Blog key={index} blog={blog} refetch={homeBlogsObj.refetch} />):
+                        <LoadingBox />}
                     </div>
                 </div>
                 <div className="col-3 d-flex flex-row-reverse pe-0">
@@ -63,4 +64,8 @@ export default function HomePage(){
             </div>
         </div>
     )
+}
+
+function LoadingBox(){
+    return <div className="mt-3 shadow w-75 position-relative start-50 translate-middle-x bg-light ratio-1 d-flex justify-content-center align-items-center"><div className="spinner-border text-first" /></div>
 }

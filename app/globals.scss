@@ -56,6 +56,7 @@ $utilities-bg-colors: map-merge($utilities-bg-colors,(
 // custom imports
 @import "../node_modules/bootstrap/scss/buttons";
 @import "../node_modules/bootstrap/scss/forms";
+@import "../node_modules/bootstrap/scss/spinners";
 
 
 $custom-utilities: ("font-size": (

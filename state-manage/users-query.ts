@@ -10,7 +10,7 @@ import { BACKEND_DOMAIN } from "@/app/functions";
 export const authApiSecure = createApi({
   reducerPath: 'authapisecure',
   baseQuery: defaultBaseQuery({
-    baseUrl: (BACKEND_DOMAIN+"auth/"),
+    baseUrl: (BACKEND_DOMAIN+"/auth/"),
     credentials: "include",
   }) as any,
   endpoints: (build) => ({
@@ -76,7 +76,13 @@ export const authApiSecure = createApi({
           body: formData,
         }
       },
-    })
+    }),
+    logout: build.query<any, void>({
+      query:()=>({
+        url:"/create/",
+        method:"delete",
+      }),
+    }),
   }),
 })
 
@@ -105,6 +111,7 @@ export const {
   useGetUsersByIdQuery,
   useGetFriendsQuery,
   usePutFriendsMutation,
+  useLogoutQuery,
 } = authApiSecure
 
 
@@ -112,19 +119,18 @@ export const {
 
 export function defaultBaseQuery(args:FetchBaseQueryArgs):BaseQueryFn{
   var baseQuery = fetchBaseQuery(args);
-  return async(args:string | FetchArgs, api: BaseQueryApi, extraOptions: any):Promise<any>=>{
+  return async(args:string | FetchArgs, api: BaseQueryApi, extraOptions: any)=>{
     var raw_token = getCookieByName("access_token");
     if(!raw_token){
-      console.log("shit");
-      return {error:"not authenticated"};
+      throw {error:"not authenticated"};
     }
     var token = jwtDecode(raw_token as string);
     var current = Date.now()/1000;
     if(token.exp && token.exp<current){
-      console.log("token is expired");
-      await fetch("http://localhost:8000/auth/token/refresh/", {method:"POST", credentials:"include"})
+      await fetch(BACKEND_DOMAIN+"/auth/token/refresh/", {method:"POST", credentials:"include"})
     }
-    return baseQuery(args, api, extraOptions);
+    if(args=="") return {data:"authenticated"};
+    return await baseQuery(args, api, extraOptions);
   }
 }
 

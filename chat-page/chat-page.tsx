@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState, Dispatch } from "react";
 import { Link, useParams } from "react-router"
 
-import { useGetFriendsQuery } from "@/state-manage/users-query";
-
-import { calc_date } from "@/app/functions"
+import { useGetFriendsQuery, defaultBaseQuery } from "@/state-manage/users-query";
+import { BACKEND_DOMAIN, calc_date } from "@/app/functions"
 
 import { NavBar } from "@/app/navbar";
 import { useSelector } from "react-redux";
+import { BaseQueryApi } from "@reduxjs/toolkit/query";
 
 interface MsgType{
     msg:string,
@@ -136,14 +136,21 @@ function Msg({msgData, friendData}:MsgProps){
 function ChatInput({msgs, setMsgs, friend}:{msgs:{msg:string, user_id:number}[], setMsgs:Dispatch<any>, friend:any}){
     const inputRef = useRef<HTMLInputElement>(null)
     useEffect(()=>{
-        function send(e:KeyboardEvent){
+        var chatSocket:WebSocket;
+        chatSocket = new WebSocket(`ws${BACKEND_DOMAIN.split("http")[1]}/ws/chat/${friend.id}/`);
+        async function send(e:KeyboardEvent){
             if(e.key=="Enter"){
                 var inputEle = e.currentTarget as HTMLInputElement;
+                var authFunc = defaultBaseQuery({baseUrl:""});
+                var res = await authFunc("", {} as BaseQueryApi, {})
+                if(res.error){console.error("not authenticated"); return;}
+                if(chatSocket.readyState!=WebSocket.OPEN){
+                    chatSocket = new WebSocket(`ws${BACKEND_DOMAIN.split("http")[0]}/ws/chat/${friend.id}/`);
+                }
                 chatSocket.send(JSON.stringify({msg:inputEle.value}))
                 inputEle.value="";
             }
         }
-        var chatSocket = new WebSocket(`ws://localhost:8000/ws/chat/${friend.id}/`);
         chatSocket.onmessage = (e)=>{
             let data = JSON.parse(e.data);
             let length = data.length;

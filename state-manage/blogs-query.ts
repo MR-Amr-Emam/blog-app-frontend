@@ -8,7 +8,7 @@ import { BACKEND_DOMAIN } from "@/app/functions";
 export const BlogsApi = createApi({
     reducerPath:"blogsapi",
     baseQuery:defaultBaseQuery({
-        baseUrl:BACKEND_DOMAIN+"blogs/",
+        baseUrl:BACKEND_DOMAIN+"/blogs/",
         credentials: "include",
     }),
     endpoints: (build) => ({

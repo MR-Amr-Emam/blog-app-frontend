@@ -14,7 +14,7 @@ export function AllBlogs(probs:any){
         <div>
             <div className="row justify-content-center w-100">
                 <div className="col-5">
-                    {isSuccess && data.map((blog:BlogType, index:number)=>{
+                    {isSuccess ? data.map((blog:BlogType, index:number)=>{
                         return(
                         !(index%2)?
                         <Blog key={blog.id}
@@ -27,18 +27,22 @@ export function AllBlogs(probs:any){
                         likes={blog.likes}
                         date={blog.date} />
                         :"")
-                    })}
+                    }):<LoadingBox />}
                 </div>
                 <div className="col-5">
-                {isSuccess && data.map((blog:any, index:number)=>{
+                {isSuccess ? data.map((blog:any, index:number)=>{
                         return(
                         (index%2)?
                         <Blog key={blog.id} mini={false} id={blog.id} title={blog.title} views={blog.views}
                         likes={blog.likes} description={blog.description} image={blog.image} date={blog.date} />
                         :"")
-                    })}
+                    }):<LoadingBox />}
                 </div>
             </div>
         </div>
     )
+}
+
+function LoadingBox(){
+    return <div className="mt-3 shadow w-75 position-relative start-50 translate-middle-x bg-light ratio-1 d-flex justify-content-center align-items-center"><div className="spinner-border text-first" /></div>
 }

@@ -1,9 +1,8 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { setUserData } from "@/state-manage/user-slice"
 import { useGetUserQuery } from "@/state-manage/users-query";
 
-import { User } from "@/state-manage/user-slice"
 
 export function InitialSetup(){
     const dispatch = useDispatch();
