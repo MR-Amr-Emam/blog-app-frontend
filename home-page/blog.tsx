@@ -33,13 +33,13 @@ export function Blog({blog, refetch}:{blog:BlogType, refetch:any}){
             </div>
             <div><Link to={`/blog/${blog.id}`}><img className="w-100 pointer" src={blog.image} /></Link></div>
             <div className="myp-2">
-                <div className="myfs fw-semibold text-first">{blog.title}</div>
+                <div><span className="myfs fw-semibold text-first">{blog.title}</span>{blog.isVideo&&<span className="mx-3 myfs-mini text-success fw-semibold">video</span>}</div>
                 <div className="myfs">{blog.description}</div>
                 <div className="d-flex">
                     <span className="position-relative z-1 d-flex align-items-center me-1">
                         <span className="pointer mx-1" onClick={()=>{setIsViews(false); setIsLikes(true)}}>{blog.likes}</span> 
-                        {blog.liked?<span className="text-danger pointer myfs" onClick={()=>{mutate(blog.id)}}><HeartFill /></span>:
-                        <span className="pointer text-gray myfs" onClick={()=>{mutate(blog.id)}}><Heart /></span>}
+                        {blog.liked?<span className="text-danger pointer myfs" onClick={()=>{mutate({id:blog.id})}}><HeartFill /></span>:
+                        <span className="pointer text-gray myfs" onClick={()=>{mutate({id:blog.id})}}><Heart /></span>}
                         {isLikes?<Users users={blog.likedPeople} setState={setIsLikes} />:""}
                     </span>
                     <span className="mx-2 position-relative z-1 d-flex align-items-center ms-1">

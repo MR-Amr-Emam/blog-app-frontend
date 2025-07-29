@@ -27,12 +27,12 @@ export function PageBody(){
           <InitialSetup />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<ChatPage />} />
-              <Route path="/profile/:id" element={<ProfilePage />} />
-              <Route path="/blog/:id" element={<BlogPage />} />
-              <Route path="/home" element={<HomePage />} />
-              <Route path="/group/:groupId" element={<GroupPage />} />
-              <Route path="/chat/:friendId" element={<ChatPage />} />
+              <Route path="/" element={<HomePage />} />
+              <Route path="/#profile/:id" element={<ProfilePage />} />
+              <Route path="/#blog/:id" element={<BlogPage />} />
+              {/*<Route path="/home" element={<HomePage />} />*/}
+              <Route path="/#group/:groupId" element={<GroupPage />} />
+              <Route path="/#chat/:friendId" element={<ChatPage />} />
             </Routes>
           </BrowserRouter>
         </Provider>

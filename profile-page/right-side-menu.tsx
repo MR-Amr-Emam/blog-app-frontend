@@ -1,5 +1,6 @@
 import { Blog } from "./blog";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router";
 import Cropper, { ReactCropperElement } from "react-cropper";
 import { 
     useChangeUserInfoMutation,
@@ -78,7 +79,14 @@ export function RightSideMenu(props:RightSideMenuProps){
                     <div className="myfs fw-semibold text-gray">groups</div>
                     {groupsDataObj.isSuccess && groupsDataObj.data.map((group:any, index:number)=>
                     <div key={index} className="d-flex align-items-center mt-3">
-                        <div><img src={group.image} className="circle-mini" /></div>
+                        <div><div style={{
+                            width: "calc(1.8 * var(--unit))",
+                            height: "calc(1.8 * var(--unit))",
+                            backgroundImage: `url(${group.image})`,
+                            backgroundSize: "cover",
+                            borderRadius: "50%",
+                            backgroundPosition: "center",
+                        }} /></div>
                         <Link to={`/group/${group.id}`}><div className="myfs-mini mx-2 pointer">{group.name}</div></Link>
                     </div>)}
                 </div>
@@ -89,7 +97,7 @@ export function RightSideMenu(props:RightSideMenuProps){
                 <div className="mt-3">
                     <div className="fw-semibold text-center myfs-4 mx-3 border-top">top blogs</div>
                         <div className="w-90 position-relative start-50 translate-middle-x">{topBlogsObj.isSuccess && topBlogsObj.data.map((blog:BlogType, index:number)=>
-                            <Blog key={blog.id} mini={true} id={blog.id} title={blog.title} views={blog.views}
+                            <Blog key={blog.id} mini={true} userId={blog.userId} id={blog.id} title={blog.title} views={blog.views}
                             likes={blog.likes} description={blog.description} image={blog.image} date={blog.date} />
                         )}</div>
                 </div>
@@ -108,6 +116,7 @@ function FriendBtn(){
         [["confirm"], ["remove"]],
         [["remove request"], [""]]
     ];
+    const navigate = useNavigate();
     
     /// Data Fetching
     const {data, refetch, isSuccess} = useGetUserQuery(Number(id || 0))
@@ -147,6 +156,9 @@ function FriendBtn(){
                     onClick={()=>{
                         ((data.friendStatus==1 && index==1) || (data.friendStatus==2 && index==0))
                         && mutate({id:Number(id||0), method:"delete", friendStatus:data.friendStatus});
+
+                        ((data.friendStatus==1 && index==0)) && navigate(`/chat/${id}`);
+                        
                         setIsHide(true);
                     }}
                     >{ele}</div>
@@ -166,9 +178,14 @@ export function FriendsMenu({setIsProfPic}:{setIsProfPic:any}){
     // data fetching
     const userDataObj = useGetUserQuery(Number(id || 0));
     const userData = userDataObj.data;
-    const {data, isSuccess} = useGetFriendsQuery(Number(id || 0));
+    const {data, isSuccess, refetch} = useGetFriendsQuery(Number(id || 0));
     const [mutate, result] = usePutFriendsMutation()
+    const [fetchId, setFetchId] = useState(0);
 
+    useEffect(()=>{
+        result.isSuccess && refetch();
+        result.isSuccess && setFetchId(0);
+    }, [result.isSuccess])
 
     function generateFriend(ele:any, index:number, friendStatus:number){
         return (
@@ -182,11 +199,13 @@ export function FriendsMenu({setIsProfPic}:{setIsProfPic:any}){
                     }}>{ele.username}</Link>
                 </div>
                 {friendStatus==1?<><Link to={`/chat/${ele.id}`}><div className="mx-2 myfs-mini text-first pointer"><ChatLeftDotsFill /></div></Link>
-                <div className="mx-2 pointer myfs-mini text-danger" onClick={()=>{mutate({id:ele.id, method:"delete", friendStatus:1})}}><PersonXFill /></div></>:""}
+                <div className="mx-2 pointer myfs-mini text-danger" onClick={()=>{mutate({id:ele.id, method:"delete", friendStatus:1}); setFetchId(ele.id);}}><PersonXFill /></div></>:""}
                 {friendStatus==2?<PersonPlusFill className="mx-2 myfs-mini text-first"
-                onClick={()=>{mutate({id:ele.id, method:"put", friendStatus:1 })}} />:""}
-                {friendStatus==3?<PersonXFill className="mx-2 myfs-mini text-danger"
-                onClick={()=>{mutate({id:ele.id, method:"delete", friendStatus:1 })}} />:""}
+                onClick={()=>{mutate({id:ele.id, method:"put", friendStatus:1 }); setFetchId(ele.id);}} />:""}
+                {friendStatus>=2?<PersonXFill className="mx-2 myfs-mini text-danger"
+                onClick={()=>{mutate({id:ele.id, method:"delete", friendStatus:1 }); setFetchId(ele.id);}} />:""}
+                {(result.isLoading && ele.id==fetchId)&&<div className="spinner-border text-first"
+                style={{width:"calc(0.8 * var(--unit))", height:"calc(0.8 * var(--unit))"}} />}
             </div>
         )
     }
@@ -300,12 +319,15 @@ export function EditMenu(props:EditMenuProps){
             </div>
             <div className="mb-3">
                 <div className="fw-medium">bio</div>
-                <input type="text" value={props.userDataEdit?.bio} className="myinput bg-gray myfs-mini text-gray"
+                <input type="text" value={props.userDataEdit?.bio || ""} className="myinput bg-gray myfs-mini text-gray"
                 onChange={(e)=>{props.setUserDataEdit({...props.userDataEdit, bio:e.target.value})}} />
             </div>
             <div className="mb-3">
                 <button className="btn btn-success w-100" onClick={applyChanges}>apply changes</button>
             </div>
+            {result.isLoading && <div className="d-flex justify-content-center">
+                <div className="spinner-border text-first" />
+            </div>}
         </div>
     )
 }

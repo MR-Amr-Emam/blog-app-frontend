@@ -65,7 +65,8 @@ export function AddBlog(props:Props){
     }
 
     useEffect(()=>{
-        (!result.isLoading && result.isSuccess) && props.setAddBlog(false) && dispatch(setBlogSubmitted(true));
+        (!result.isLoading && result.isSuccess) && props.setAddBlog(false);
+        (!result.isLoading && result.isSuccess) && dispatch(setBlogSubmitted(true));
         !result.isLoading && !result.isSuccess && clicked && setErrorMsg("fill fields properly");
         result.isLoading && setErrorMsg("");
     }, [result.isSuccess, result.isLoading])

@@ -19,6 +19,7 @@ export const authApiSecure = createApi({
         url:`user-info/${id}/`,
         method:"get",
       }),
+      keepUnusedDataFor: 10,
       transformResponse:(response):User=>transformUser(response),
     }),
     changeUserInfo: build.mutation<any, {id:number, data:any}>({
@@ -35,18 +36,11 @@ export const authApiSecure = createApi({
         }
       }
     }),
-    getUsers: build.query<User[], string>({
-      query: (searchParam)=>({
-        url:`users-info/${searchParam}/`,
+    search: build.query<{users:any, groups:any, blogs:any}, {searchType: string, searchParam:string}>({
+      query: ({searchType, searchParam})=>({
+        url:`search/${searchType}/${searchParam}/`,
         method: "get",
       }),
-      transformResponse:(response):User[]=>{
-        var users:User[]=[];
-        response.forEach((user:any)=>{
-          users.push(transformUser(user));
-        })
-        return users;
-      },
     }),
     getUsersById: build.query<any, number[]>({
       query:(ids_param)=>({
@@ -107,7 +101,7 @@ function transformUser(response:any){
 export const {
   useGetUserQuery,
   useChangeUserInfoMutation,
-  useGetUsersQuery,
+  useSearchQuery,
   useGetUsersByIdQuery,
   useGetFriendsQuery,
   usePutFriendsMutation,
