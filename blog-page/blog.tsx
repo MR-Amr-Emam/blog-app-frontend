@@ -42,7 +42,9 @@ export function Blog(){
                 <div className="mx-2"><Link to={`/profile/${blog.userId}/`}><div className="fw-semibold pointer">{blog.username}</div></Link>
                 <div className="myfs-mini text-dark-emphasis">{calc_date(blog.date)}</div></div>
             </div>
-            <div><img src={blog.image} className="w-100 ratio-2 mt-3" /></div>
+            <div>{blog.isVideo?
+                <video src={blog.video} controls className="w-100 mt-3 rounded" />
+                :<img src={blog.image} className="w-100 ratio-2 mt-3 rounded" />}</div>
             <div>
                 <div className="myfs-4 text-first fw-semibold mt-2">
                     {blog.title}
@@ -51,8 +53,8 @@ export function Blog(){
                 <div className="text-dark-emphasis myfs-mini mt-2">
                     <span className="position-relative">
                         <span onClick={()=>{setLikes(true); setViews(false)}} className="pointer">{blog.likes}</span>
-                        {blog.liked?<span className="text-primary pointer" onClick={()=>{mutate(Number(id||5));}}> liked </span>
-                        :<span onClick={()=>{mutate(Number(id||5));}} className="pointer"> likes </span>}
+                        {blog.liked?<span className="text-primary pointer" onClick={()=>{mutate({id:Number(id||5)});}}> liked </span>
+                        :<span onClick={()=>{mutate({id:Number(id||5)});}} className="pointer"> likes </span>}
                         {likes?<Users setState={setLikes} users={blog.likedPeople} />:""}
                     </span>
                     <span className="position-relative">
@@ -69,8 +71,12 @@ export function Blog(){
                 {areComments?<Comments />:""}
             </div>
 
-        </div>:""}</>
+        </div>:<LoadingBox />}</>
     )
+}
+
+function LoadingBox(){
+    return <div className="mt-3 shadow w-100 position-relative start-50 translate-middle-x bg-light ratio-2 d-flex justify-content-center align-items-center"><div className="spinner-border text-first" /></div>
 }
 
 interface BlogSectionProps{

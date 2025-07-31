@@ -21,6 +21,7 @@ export const BlogsApi = createApi({
                 })
                 return blogs;
             },
+            keepUnusedDataFor: 15,
         }),
         getHomeBlogs: build.query<Blog[], void|any>({
             query:(id)=>`home/${id?id+"/":""}`,
@@ -36,8 +37,8 @@ export const BlogsApi = createApi({
             query:(id)=>`blog/${id}/`,
             transformResponse: transformBlog,
         }),
-        putBlog: build.mutation<Blog, number>({
-            query:(id)=>({url:`blog/${id}/`, method:"PATCH"}),
+        putBlog: build.mutation<Blog, {id:number, method?:string}>({
+            query:({id, method})=>({url:`blog/${id}/`, method:method || "PATCH"}),
             transformResponse: transformBlog,
         }),
         submitBlog: build.mutation<any, FormData>({
@@ -80,6 +81,9 @@ export const { useGetBlogsQuery,
 
 
 function transformBlog(response:any):Blog{
+    if(!response){
+        return response;
+    }
     var blog:Blog = {
         userId: response.user.id,
         username: response.user.username,

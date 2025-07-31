@@ -12,7 +12,7 @@ export function SideMenu({category}:{category:number}){
             <div className="fw-semibold text-center mx-3">related blogs</div>
                 {isSuccess && data.map((blog:BlogType, index:number)=>{
                     return(
-                    <Blog key={blog.id} mini={true} id={blog.id} title={blog.title} views={blog.views}
+                    <Blog key={blog.id} mini={true} userId={blog.userId} id={blog.id} title={blog.title} views={blog.views}
                     likes={blog.likes} description={blog.description} image={blog.image} date={blog.date} />
                     )
             })}

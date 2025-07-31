@@ -10,7 +10,7 @@ interface ProfilePageType{
 
 export const profilePageSlice = createSlice({
     name: "profilepageslice",
-    initialState: {sideMenuSelect:"menu", refetch:false},
+    initialState: {sideMenuSelect:"menu", refetch:false} as ProfilePageType,
     reducers: {
         setSideMenuSelect:(state, payload:PayloadAction<string>)=>{
             state.sideMenuSelect=payload.payload

@@ -1,9 +1,10 @@
 import {Link} from "react-router";
 import { useSelector } from "react-redux";
 import { useEffect, useRef, useState, Dispatch, SetStateAction, } from "react";
-import { useGetUsersQuery, useGetFriendsQuery, useLogoutQuery } from "@/state-manage/users-query";
+import { useSearchQuery, useGetFriendsQuery, useLogoutQuery } from "@/state-manage/users-query";
 import { useGetInvitesQuery, useDeleteInvitesMutation } from "@/state-manage/groups-query";
 import { User } from "@/state-manage/user-slice";
+import { TrashFill } from "react-bootstrap-icons";
 import { useParams } from "react-router";
 
 import { ChatLeftDotsFill,
@@ -23,7 +24,7 @@ export function NavBar(){
             <div>
                 <div className="d-flex myp-1">
                     <div className="mx-2 pointer glory">Blog</div>
-                    <div className="mx-2 pointer glory"><Link to="/home">home</Link></div>
+                    <div className="mx-2 pointer glory"><Link to="/">home</Link></div>
                     <div className="mx-2 pointer glory"><Link to={`/profile/${userId}`}>profile</Link></div>
                 </div>
             </div>
@@ -61,7 +62,7 @@ interface SearchProps{
 }
 
 function Search({setIsSearch}:SearchProps){
-    const categories = ["all", "people", "posts", "groups"];
+    const categories = ["all", "people", "blogs", "groups"];
     const [category, setCategory] = useState("all");
     const [searchParam, setSearchParam] = useState<string>("");
     const searchEle = useRef<HTMLDivElement>(null);
@@ -81,6 +82,7 @@ function Search({setIsSearch}:SearchProps){
             padding:"calc(0.25 * var(--unit))",
             top: "calc(-0.25 * var(--unit))",
             left: "calc(-0.25 * var(--unit))",
+            minWidth: "calc(17 * var(--unit))",
         }}>
             <div className="bg-white d-flex position-relative border rounded align-items-center
             justify-content-around myp-1 w-100 mb-2">
@@ -93,26 +95,48 @@ function Search({setIsSearch}:SearchProps){
                 <div key={index} className={`${ele==category && "focused"} myp-1 rounded mx-2 myfs-mini pointer option-select`} onClick={()=>{setCategory(ele)}}>{ele}</div>
                 )}
             </div>
-            {searchParam && category=="people" && <UsersSearchResult searchParam={searchParam} />}
+            {searchParam && <SearchResult category={category} searchParam={searchParam} />}
         </div>
     )
 }
 
-function UsersSearchResult({searchParam}:{searchParam:string}){
-    const {data, isSuccess} = useGetUsersQuery(searchParam);
+function SearchResult({category, searchParam}:{category:string, searchParam:string}){
+    const searchType = category=="people"?"users":category;
+    const {data, isSuccess} = useSearchQuery({searchType, searchParam});
     return (
         <div>
-            {isSuccess && data.map((ele:User, index:number)=>
-            <Link key={index} to={`/profile/${ele.id}`}><div className="myfs-mini myp-1 mb-2 pointer rounded"
-            onMouseEnter={(e)=>{e.currentTarget.classList.add("bg-gray")}}
-            onMouseLeave={(e)=>{e.currentTarget.classList.remove("bg-gray")}}>
-                <div className="d-flex align-items-center">
-                    <div className="mx-1"><img className="circle-mini" src={ele.profileImage} /></div>
-                    <div className="mx-1">{ele.username}</div>
-                </div>
-            </div></Link>)}
+            {isSuccess && data.users?.map((ele:any, index:number)=>
+            <ResultItem key={index} url={`/profile/${ele.id}`} id={ele.id} text={ele.username}
+            image={ele.profile_image} type="user" />)}
+
+            {isSuccess && data.groups?.map((ele:any, index:number)=>
+            <ResultItem key={index} url={`/group/${ele.id}`} id={ele.id} text={ele.name}
+            image={ele.image} type="group" />)}
+
+            {isSuccess && data.blogs?.map((ele:any, index:number)=>
+            <ResultItem key={index} url={`/blog/${ele.id}`} id={ele.id} text={ele.title}
+            image={ele.image} type="blog" />)}
         </div>
     )
+}
+
+function ResultItem({url, id, text, image, type}:{url:string, id:number, text:string, image:string, type:string}){
+    return (
+        <Link to={url}><div className="myfs-mini myp-1 mb-2 pointer rounded"
+        onMouseEnter={(e)=>{e.currentTarget.classList.add("bg-gray")}}
+        onMouseLeave={(e)=>{e.currentTarget.classList.remove("bg-gray")}}>
+            <div className="d-flex align-items-center">
+                <div className="mx-1"><div className={type!="blog"?"rounded-circle":""} style={{
+                    width:"calc(1.8 * var(--unit))",
+                    height:"calc(1.8 * var(--unit))",
+                    backgroundImage: `url(${image})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                }} /></div>
+                <div className="mx-1">{text}</div>
+                <div className="mx-3 text-gray">{type}</div>
+            </div>
+        </div></Link>)
 }
 
 
@@ -152,7 +176,7 @@ function Invites(){
                 <span className="fw-semibold me-2"><Link to={`/profile/${invite.inviter.id}`}>{invite.inviter.username}</Link></span>
                 has invited you to
                 <span className="fw-semibold ms-2"><Link to={`/group/${invite.group.id}`}>{invite.group.name}</Link></span>
-                <span className="ms-1 text-danger pointer" onClick={()=>{mutate(invite.id)}}>D</span>
+                <span className="ms-1 text-danger pointer" onClick={()=>{mutate(invite.id)}}><TrashFill /></span>
 
             </div>)}
         </div>}

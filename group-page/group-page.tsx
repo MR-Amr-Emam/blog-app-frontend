@@ -9,9 +9,10 @@ import { Blog } from "@/home-page/blog";
 import { AddBlog } from "@/home-page/add-blog";
 
 import { setBlogSubmitted } from "@/state-manage/user-slice";
-
 import { NavBar } from "@/app/navbar";
 import { Btns } from "./btns";
+
+import { PenFill,} from "react-bootstrap-icons";
 
 export function GroupPage(){
     const {groupId} = useParams();
@@ -156,7 +157,7 @@ function Member({member, refetch, isAdmin}:MemberProps){
         <div>
             <Link to={`/profile/${member.id}`}><span className="myfs-mini mx-2 pointer">{member.username}</span></Link>
             {(!member.admin && isAdmin)?<span className="myfs-mini text-gray mx-2 fw-semibold pointer"
-            onClick={()=>{setIsMenu(true)}}>I</span>:""}
+            onClick={()=>{setIsMenu(true)}}><PenFill /></span>:""}
             {member.admin?<div className="myfs-mini text-first mx-2 fw-semibold">admin</div>:""}
         </div>
         {(isAdmin && isMenu)?<MemberMenu refetch={refetch} userId={member.id} setState={setIsMenu} />:""}

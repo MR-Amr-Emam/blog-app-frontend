@@ -32,7 +32,14 @@ export function RightSideMenu({setCreateGroup}:Props){
             {groupsObj.isSuccess && groupsObj.data.map((group:any, index:number)=>{
                 return(
                     <Link key={index} to={`/group/${group.id}`}><div className="d-flex align-items-center mt-3">
-                        <div><img src={group.image} className="circle-mini" /></div>
+                        <div><div style={{
+                            width: "calc(1.8 * var(--unit))",
+                            height: "calc(1.8 * var(--unit))",
+                            backgroundImage: `url(${group.image})`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            borderRadius: "50%",
+                        }} /></div>
                         <div className="myfs-mini mx-2 pointer">{group.name}</div>
                     </div></Link>
                 )
